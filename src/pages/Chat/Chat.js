@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import {
   Container,
   Text,
@@ -9,18 +9,36 @@ import {
   Icon,
   Title,
   Button,
-  Content,
   List,
   ListItem,
   Thumbnail,
 } from 'native-base';
-// import styles from './Chat.Styles';
+import {useSelector, useDispatch} from 'react-redux';
+import {getActiveChats} from '../../../redux/Actions/chatActions';
+import {logout} from '../../../redux/Actions/userActions';
 
 export default function Chat({navigation, route}) {
-  const users = [
-    {name: 'Peters Chikezie', message: 'hello', timestamp: '3:22pm'},
-    {name: 'Oba', message: 'hi', timestamp: '1:01am'},
-  ];
+  const users = useSelector(state => state.activeChats);
+  // reverse user array
+  users.reverse();
+
+  const auth = useSelector(state => state.auth);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      if (!auth.isAuthenticated) {
+        dispatch(logout(navigation));
+        navigation.navigate('Splash');
+      } else {
+        // get active chats
+        dispatch(getActiveChats());
+      }
+    });
+    return unsubscribe;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dispatch, navigation]);
+
   return (
     <Container>
       {/* header */}
@@ -39,28 +57,26 @@ export default function Chat({navigation, route}) {
       </Header>
       {/* Body */}
 
-      <Content>
-        <List
-          dataArray={users}
-          renderRow={user => (
-            <ListItem
-              avatar
-              onPress={() => navigation.navigate('ChatDetails', {user})}>
-              <Left>
-                <Thumbnail source={require('../../images/photo.jpg')} />
-              </Left>
-              <Body>
-                <Text>{user.name}</Text>
-                <Text note>{user.message}</Text>
-              </Body>
-              <Right>
-                <Text note>{user.timestamp}</Text>
-              </Right>
-            </ListItem>
-          )}
-          keyExtractor={(user, index) => index.toString()}
-        />
-      </Content>
+      <List
+        dataArray={users}
+        renderRow={user => (
+          <ListItem
+            avatar
+            onPress={() => navigation.navigate('ChatDetails', {user})}>
+            <Left>
+              <Thumbnail source={require('../../images/photo.jpg')} />
+            </Left>
+            <Body>
+              <Text>{user.name}</Text>
+              <Text note>{user.message}</Text>
+            </Body>
+            <Right>
+              <Text note>{user.timestamp}</Text>
+            </Right>
+          </ListItem>
+        )}
+        keyExtractor={(user, index) => index.toString()}
+      />
     </Container>
   );
 }

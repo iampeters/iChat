@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Container,
   Text,
@@ -9,7 +9,6 @@ import {
   Icon,
   Title,
   Button,
-  Content,
   List,
   ListItem,
   Thumbnail,
@@ -20,12 +19,40 @@ import {
   Input,
 } from 'native-base';
 import styles from './ChatDetails.Styles';
+import {useDispatch, useSelector} from 'react-redux';
+import {
+  getChats,
+  setChats,
+  setActiveChats,
+} from '../../../redux/Actions/chatActions';
 
 export default function ChatDetails({route, navigation}) {
   const {user} = route.params;
 
-  const handleFilter = e => {
-    const query = e;
+  const [message, setMessage] = useState('');
+  const chats = useSelector(state => state.incoming);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    dispatch(getChats());
+  }, [dispatch]);
+
+  const handleSubmit = () => {
+    if (message.length !== 0) {
+      const chat = {
+        message: message,
+        timestamp: `${new Date().getMinutes()}:${new Date().getSeconds()}`,
+        username: 'john',
+        friend: user.username,
+      };
+
+      user.message = message;
+      user.timestamp = chat.timestamp;
+
+      dispatch(setChats(chat));
+      dispatch(setActiveChats(user));
+      setMessage('');
+    }
   };
 
   return (
@@ -56,24 +83,57 @@ export default function ChatDetails({route, navigation}) {
           </Button>
         </Right>
       </Header>
+
       {/* Body */}
 
-      <Content>
-        <Text>{user.message}</Text>
-      </Content>
+      <List
+        style={styles.chatContainer}
+        dataArray={chats}
+        renderRow={chat =>
+          chat && chat.username === 'john' ? (
+            // right bubble
+            <ListItem style={styles.rightBubble}>
+              <Body>
+                <Text>{chat.message}</Text>
+              </Body>
+              <Right>
+                <Text note>{chat.timestamp}</Text>
+              </Right>
+            </ListItem>
+          ) : (
+            // left bubble
+            chat && (
+              <ListItem style={styles.leftBubble}>
+                <Body>
+                  <Text style={styles.leftBubbleText}>{chat.message}</Text>
+                </Body>
+                <Right>
+                  <Text note style={styles.leftTimeStamp}>
+                    {chat.timestamp}
+                  </Text>
+                </Right>
+              </ListItem>
+            )
+          )
+        }
+        keyExtractor={(chat, index) => index.toString()}
+      />
+
+      {/* footer */}
       <Footer style={styles.footer}>
         <FooterTab style={styles.footerTab}>
           <Item style={styles.left}>
             <Input
-              onChangeText={text => handleFilter(text)}
+              onChangeText={text => setMessage(text)}
               placeholder="Start typing..."
+              value={message}
               // style={styles.searchBar}
             />
             <Icon name="attach" style={styles.attachIcon} />
             <Icon name="camera" style={styles.icon} />
           </Item>
           <Right style={styles.right}>
-            <Button style={styles.sendButton}>
+            <Button style={styles.sendButton} onPress={handleSubmit}>
               <Icon name="send" style={styles.sendIcon} />
             </Button>
           </Right>

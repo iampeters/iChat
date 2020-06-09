@@ -21,7 +21,7 @@ const styles = StyleSheet.create({
     fontSize: 12,
   },
   sendButton: {
-    backgroundColor: 'green',
+    backgroundColor: '#00d68f',
     borderRadius: 50 / 2,
     width: 50,
     height: 50,
@@ -60,6 +60,39 @@ const styles = StyleSheet.create({
   },
   sendIcon: {
     color: 'white',
+  },
+  chatContainer: {
+    paddingTop: 10,
+    paddingBottom: 10,
+  },
+  rightBubble: {
+    width: 'auto',
+    maxWidth: '80%',
+    backgroundColor: '#f0f0f5',
+    color: '#fff',
+    borderRadius: 25,
+    borderBottomRightRadius: 0,
+    alignSelf: 'flex-end',
+    marginBottom: 20,
+    marginRight: 10,
+    elevation: 2,
+  },
+  leftBubble: {
+    width: 'auto',
+    maxWidth: '80%',
+    backgroundColor: '#6355a6',
+    color: '#fff',
+    borderRadius: 25,
+    borderBottomLeftRadius: 0,
+    alignSelf: 'flex-start',
+    marginBottom: 20,
+    elevation: 2,
+  },
+  leftTimeStamp: {
+    color: '#cccbd2',
+  },
+  leftBubbleText: {
+    color: '#fff',
   },
 });
 

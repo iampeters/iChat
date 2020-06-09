@@ -18,8 +18,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   logo: {
-    width: '100%',
-    height: '70%',
+    flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     textAlign: 'center',
@@ -33,22 +32,19 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   button: {
-    width: '70%',
+    width: '60%',
     alignSelf: 'center',
     justifyContent: 'center',
     backgroundColor: '#3052ae',
-    height: 60,
   },
   buttonText: {
     color: '#ffffff',
     fontWeight: '700',
-    fontSize: 16,
   },
   buttonIcon: {
     color: '#ffffff',
     fontWeight: '700',
     marginLeft: 10,
-    fontSize: 16,
   },
 });
 

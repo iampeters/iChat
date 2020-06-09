@@ -5,7 +5,6 @@ import {
   Header,
   Icon,
   Button,
-  Content,
   Item,
   Input,
   ListItem,
@@ -17,17 +16,20 @@ import {
 
 export default function Contacts({navigation}) {
   let contacts = [
-    {name: 'Peters Chikezie', info: 'xoxo'},
-    {name: 'Oba', info: 'Hello world'},
-    {name: 'Sinach', info: 'Who goes there?'},
+    {name: 'Peters Chikezie', info: 'xoxo', username: 'iampeters'},
+    {name: 'Oba', info: 'Hello world', username: 'oba'},
+    {name: 'Sinach', info: 'Who goes there?', username: 'sinach'},
   ];
 
   const [filteredContacts, setFilteredContacts] = useState(contacts);
 
-  // useEffect(() => {
-  //   return () => {
-  //   };
-  // });
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      // screen is focused. will do something
+    });
+
+    return unsubscribe;
+  }, [contacts, navigation]);
 
   const handleFilter = e => {
     const query = e;
@@ -55,25 +57,23 @@ export default function Contacts({navigation}) {
       </Header>
       {/* Body */}
 
-      <Content>
-        <List
-          dataArray={filteredContacts}
-          renderRow={user => (
-            <ListItem
-              avatar
-              onPress={() => navigation.navigate('ChatDetails', {user})}>
-              <Left>
-                <Thumbnail source={require('../../images/photo.jpg')} />
-              </Left>
-              <Body>
-                <Text>{user.name}</Text>
-                <Text note>{user.info}</Text>
-              </Body>
-            </ListItem>
-          )}
-          keyExtractor={(user, index) => index.toString()}
-        />
-      </Content>
+      <List
+        dataArray={filteredContacts}
+        renderRow={user => (
+          <ListItem
+            avatar
+            onPress={() => navigation.navigate('ChatDetails', {user})}>
+            <Left>
+              <Thumbnail source={require('../../images/photo.jpg')} />
+            </Left>
+            <Body>
+              <Text>{user.name}</Text>
+              <Text note>{user.info}</Text>
+            </Body>
+          </ListItem>
+        )}
+        keyExtractor={(user, index) => index.toString()}
+      />
     </Container>
   );
 }
