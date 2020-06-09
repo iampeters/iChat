@@ -1,5 +1,10 @@
 import {combineReducers} from 'redux';
-import {userReducer, authReducer, loginReducer} from './userReducer';
+import {
+  userReducer,
+  authReducer,
+  loginReducer,
+  registerReducer,
+} from './userReducer';
 import {incomingReducer, outgoingReducer, activeChats} from './chats';
 
 const rootReducer = combineReducers({
@@ -9,6 +14,7 @@ const rootReducer = combineReducers({
   activeChats,
   auth: authReducer,
   login: loginReducer,
+  register: registerReducer,
 });
 
 export default rootReducer;

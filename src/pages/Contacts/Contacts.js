@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
   Container,
   Text,
@@ -13,6 +13,8 @@ import {
   Thumbnail,
   Body,
 } from 'native-base';
+import {useSelector} from 'react-redux';
+import {StackActions} from '@react-navigation/native';
 
 export default function Contacts({navigation}) {
   let contacts = [
@@ -20,16 +22,15 @@ export default function Contacts({navigation}) {
     {name: 'Oba', info: 'Hello world', username: 'oba'},
     {name: 'Sinach', info: 'Who goes there?', username: 'sinach'},
   ];
-
   const [filteredContacts, setFilteredContacts] = useState(contacts);
+  const auth = useSelector(state => state.auth.isAuthenticated);
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      // screen is focused. will do something
+    const subscription = navigation.addListener('focus', () => {
+      !auth && navigation.dispatch(StackActions.replace('Splash'));
     });
-
-    return unsubscribe;
-  }, [contacts, navigation]);
+    return subscription;
+  }, [auth, navigation]);
 
   const handleFilter = e => {
     const query = e;

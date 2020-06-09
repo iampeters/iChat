@@ -5,6 +5,7 @@ export default class AuthService {
   constructor() {}
 
   token = API.localhost + 'token';
+  create = API.localhost + 'add';
 
   async login(data) {
     try {
@@ -22,14 +23,21 @@ export default class AuthService {
     }
   }
 
-  // async register(data) {
-  //   try {
-  //     const response = await axios.post(this.admin, data);
-  //     return response;
-  //   } catch (err) {
-  //     return err;
-  //   }
-  // }
+  async register(data) {
+    try {
+      let response = await fetch(this.create, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      return await response.json();
+    } catch (err) {
+      throw err;
+    }
+  }
 
   // async getUser(data) {
   //   try {

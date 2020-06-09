@@ -1,12 +1,12 @@
 import React, {useState, useEffect} from 'react';
-import {Text, View} from 'react-native';
+import {Text, View, Dimensions} from 'react-native';
 import styles from './Signin.Styles';
-import {Container, Button, Spinner, Toast} from 'native-base';
+import {Container, Button, Spinner, Toast, Footer} from 'native-base';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import Feather from 'react-native-vector-icons/Feather';
 import InputFieldWithIcon from '../../components/inputFieldWithIcon';
 import {useDispatch, useSelector} from 'react-redux';
-import {login, isAuthenticated} from '../../../redux/Actions/userActions';
+import {login} from '../../../redux/Actions/userActions';
+import {StackActions} from '@react-navigation/native';
 import {ScrollView} from 'react-native-gesture-handler';
 
 export default function Signin({navigation}) {
@@ -16,9 +16,11 @@ export default function Signin({navigation}) {
   const [submitted, setSubmitted] = useState(false);
   const [isPasswordValid, setPasswordValid] = useState(null);
   const [isEmailValid, setEmailValid] = useState(null);
-  const auth = useSelector(state => state.auth);
+  const auth = useSelector(state => state.auth.isAuthenticated);
   const dispatch = useDispatch();
   const loginResponse = useSelector(state => state.login);
+
+  let screenHeight = Dimensions.get('window').height;
 
   useEffect(() => {
     // check if there are notifications message
@@ -37,7 +39,6 @@ export default function Signin({navigation}) {
               payload: {},
             }),
         });
-
         // enable button
         setSubmitted(false);
       } else {
@@ -55,17 +56,14 @@ export default function Signin({navigation}) {
         });
       }
     }
-    // dispatch(logout(navigation));
-    dispatch(isAuthenticated());
-    auth.isAuthenticated && navigation.navigate('Home');
-
-    const unsubscribe = navigation.addListener('focus', () => {
-      auth.isAuthenticated && navigation.navigate('Home');
-    });
-
-    return unsubscribe;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, navigation, loginResponse]);
+
+  useEffect(() => {
+    const subscription = navigation.addListener('focus', () => {
+      auth && navigation.dispatch(StackActions.replace('Home'));
+    });
+    return subscription;
+  }, [navigation, auth]);
 
   const handleSubmit = async () => {
     let user = {
@@ -75,7 +73,7 @@ export default function Signin({navigation}) {
 
     setHidden(true);
     setSubmitted(true);
-    dispatch(login(user, navigation));
+    dispatch(login(user));
   };
 
   const validateEmail = text => {
@@ -109,107 +107,94 @@ export default function Signin({navigation}) {
   };
 
   return (
-    <Container style={styles.container}>
-      {/* <Header style={styles.header}>
-        <Left>
-          <Button transparent onPress={() => navigation.goBack()}>
-            <Icon name="arrow-back" style={styles.icon} />
-            <Title style={styles.title}>{route.name}</Title>
-          </Button>
-        </Left>
-      </Header> */}
+    <Container style={{height: screenHeight, backgroundColor: '#fff'}}>
+      <ScrollView>
+        <View style={styles.logo}>
+          <Ionicons name="ios-chatbubbles" color="#3052ae" size={90} />
+          <Text style={styles.text}>Welcome. Login</Text>
+        </View>
 
-      <View style={styles.logo}>
-        <Ionicons name="ios-chatbubbles" color="#3052ae" size={90} />
-        {/* <Text style={styles.text}> {strings.appName}</Text> */}
-      </View>
-
-      <View style={styles.inputView}>
-        <InputFieldWithIcon
-          iconName="user"
-          iconColor={
-            isEmailValid
-              ? '#00d68f'
-              : isEmailValid === null
-              ? '#1e2c65'
-              : '#ff3d71'
-          }
-          iconSize={20}
-          autoFocus={false}
-          placeholder="Enter email"
-          onChangeText={text => validateEmail(text)}
-          returnKeyType="next"
-          keyboardType="email-address"
-          placeholderTextColor="#1e2c65"
-          textContentType="emailAddress"
-          secureTextEntry={false}
-          value={email}
-          valid={isEmailValid}
-          disabled={submitted}
-        />
-
-        <InputFieldWithIcon
-          iconName="lock"
-          iconColor={
-            isPasswordValid
-              ? '#00d68f'
-              : isPasswordValid === null
-              ? '#1e2c65'
-              : '#ff3d71'
-          }
-          iconSize={20}
-          autoFocus={false}
-          placeholder="Enter password"
-          onChangeText={text => validatePassword(text)}
-          returnKeyType="done"
-          keyboardType="default"
-          placeholderTextColor="#1e2c65"
-          textContentType="password"
-          secureTextEntry={hidden}
-          value={password}
-          valid={isPasswordValid}
-          isPassword={true}
-          onIconPress={handleVisibility}
-          rightIconName={hidden ? 'eye-off' : 'eye'}
-          disabled={submitted}
-        />
-
-        <Button
-          full
-          rounded
-          disabled={
-            !email ||
-            !password ||
-            !isPasswordValid ||
-            !isEmailValid ||
-            submitted
-              ? true
-              : false
-          }
-          style={styles.button}
-          onPress={handleSubmit}>
-          {!submitted && <Text style={styles.buttonText}>Login</Text>}
-          {submitted && <Spinner color="white" />}
-        </Button>
-      </View>
-
-      <View style={styles.buttonContent}>
-        <Button
-          full
-          rounded
-          style={styles.buttonWithIcon}
-          onPress={() => navigation.navigate('Signup')}>
-          <Text style={{color: '#3052ae', fontSize: 14}}>
-            Click here to register
-          </Text>
-          <Feather
-            name="arrow-right"
-            color="#3052ae"
-            size={20}
-            style={styles.buttonIcon}
+        <View style={styles.inputView}>
+          <InputFieldWithIcon
+            iconName="user"
+            iconColor={
+              isEmailValid
+                ? '#00d68f'
+                : isEmailValid === null
+                ? '#1e2c65'
+                : '#ff3d71'
+            }
+            iconSize={20}
+            autoFocus={false}
+            placeholder="Enter email"
+            onChangeText={text => validateEmail(text)}
+            returnKeyType="next"
+            keyboardType="email-address"
+            placeholderTextColor="#1e2c65"
+            textContentType="emailAddress"
+            secureTextEntry={false}
+            value={email}
+            valid={isEmailValid}
+            disabled={submitted}
           />
-        </Button>
-      </View>
+
+          <InputFieldWithIcon
+            iconName="lock"
+            iconColor={
+              isPasswordValid
+                ? '#00d68f'
+                : isPasswordValid === null
+                ? '#1e2c65'
+                : '#ff3d71'
+            }
+            iconSize={20}
+            autoFocus={false}
+            placeholder="Enter password"
+            onChangeText={text => validatePassword(text)}
+            returnKeyType="done"
+            keyboardType="default"
+            placeholderTextColor="#1e2c65"
+            textContentType="password"
+            secureTextEntry={hidden}
+            value={password}
+            valid={isPasswordValid}
+            isPassword={true}
+            onIconPress={handleVisibility}
+            rightIconName={hidden ? 'eye-off' : 'eye'}
+            disabled={submitted}
+          />
+
+          <Button
+            full
+            rounded
+            disabled={
+              !email ||
+              !password ||
+              !isPasswordValid ||
+              !isEmailValid ||
+              submitted
+                ? true
+                : false
+            }
+            style={styles.button}
+            onPress={handleSubmit}>
+            {!submitted && <Text style={styles.buttonText}>Login</Text>}
+            {submitted && <Spinner color="white" />}
+          </Button>
+        </View>
+
+        <Footer style={styles.buttonContent}>
+          <Button
+            full
+            rounded
+            androidRippleColor="transparent"
+            style={styles.buttonWithIcon}
+            onPress={() => navigation.navigate('Signup')}>
+            <Text style={styles.buttonTextFirst}>Don't have an account?</Text>
+            <Text style={styles.subText}>Register</Text>
+          </Button>
+        </Footer>
+      </ScrollView>
     </Container>
   );
 }

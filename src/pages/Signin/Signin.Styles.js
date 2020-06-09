@@ -18,31 +18,33 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   text: {
-    fontSize: 30,
+    fontSize: 20,
     fontWeight: '600',
   },
   subText: {
+    color: '#3052ae',
     fontSize: 14,
-    fontWeight: '300',
-    marginTop: 10,
+    fontWeight: '600',
+    marginLeft: 5,
   },
+  buttonTextFirst: {color: 'gray', fontSize: 14},
   content: {
     flex: 1,
     // backgroundColor: 'black',
   },
   logo: {
-    flex: 1,
+    // flex: 1,
     alignItems: 'center',
-    justifyContent: 'flex-end',
-    // padding: 20,
+    justifyContent: 'center',
+    height: 220,
     // backgroundColor: 'red',
   },
   inputView: {
-    flex: 2,
+    // flex: 2,
     alignItems: 'center',
     justifyContent: 'center',
     // backgroundColor: 'green',
-    paddingTop: 25,
+    height: 380,
   },
   inputWrapper: {
     backgroundColor: 'white',
@@ -56,8 +58,6 @@ const styles = StyleSheet.create({
     borderRadius: 50,
     height: 60,
     elevation: 5,
-    // borderWidth: 1,
-    // borderColor: '#3052ae',
   },
   input: {},
   inputIcon: {
@@ -66,10 +66,11 @@ const styles = StyleSheet.create({
     left: 15,
   },
   buttonContent: {
-    flex: 1,
-    alignItems: 'center',
+    // height: 100,
+    alignItems: 'flex-end',
     justifyContent: 'center',
-    // backgroundColor: 'blue',
+    backgroundColor: '#fff',
+    padding: 0,
   },
   button: {
     width: '80%',
@@ -85,7 +86,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     alignSelf: 'center',
     height: 60,
-    marginTop: 25,
     elevation: 0,
   },
   buttonText: {

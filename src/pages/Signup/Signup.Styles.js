@@ -18,26 +18,29 @@ const styles = StyleSheet.create({
     marginLeft: 10,
   },
   text: {
-    fontSize: 30,
+    fontSize: 18,
     fontWeight: '600',
   },
   subText: {
+    color: '#3052ae',
     fontSize: 14,
-    fontWeight: '300',
-    marginTop: 10,
+    fontWeight: '600',
+    marginLeft: 5,
   },
+  buttonTextFirst: {color: 'gray', fontSize: 14},
   content: {
-    flex: 1,
+    // flex: 1,
     // backgroundColor: 'black',
   },
   logo: {
-    flex: 1,
+    // flex: 1,
     alignItems: 'center',
-    padding: 20,
+    justifyContent: 'flex-end',
+    paddingTop: 20,
     // backgroundColor: 'red',
   },
   inputView: {
-    flex: 2,
+    // flex: 2,
     alignItems: 'center',
     justifyContent: 'center',
     // backgroundColor: 'green',
@@ -65,7 +68,7 @@ const styles = StyleSheet.create({
     left: 15,
   },
   buttonContent: {
-    flex: 1,
+    // flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     // backgroundColor: 'blue',
@@ -90,6 +93,7 @@ const styles = StyleSheet.create({
   buttonText: {
     color: '#ffffff',
     fontWeight: '700',
+    fontSize: 16,
   },
   buttonIcon: {
     // color: '#ffffff',

@@ -6,40 +6,32 @@ import Feather from 'react-native-vector-icons/Feather';
 import Contacts from '../Contacts/Contacts';
 import {IconWithBadge} from '../../components/Badge';
 import {useSelector, useDispatch} from 'react-redux';
-import {isAuthenticated, logout} from '../../../redux/Actions/userActions';
+import Feeds from '../Feeds/Feeds';
+import Notifications from '../Notifications/Notifications';
+import {StackActions} from '@react-navigation/native';
 
 export default function Home({navigation}) {
-  const auth = useSelector(state => state.auth);
+  const auth = useSelector(state => state.auth.isAuthenticated);
   const Tab = createBottomTabNavigator();
   const dispatch = useDispatch();
 
   useEffect(() => {
-    // if (!auth.isAuthenticated) {
-    //   dispatch(logout());
-    //   navigation.navigate('Splash');
-    // }
-
     const subscription = navigation.addListener('focus', () => {
-      if (!auth.isAuthenticated) {
-        dispatch(logout());
-        navigation.navigate('Splash');
-      }
+      !auth && navigation.dispatch(StackActions.replace('Splash'));
     });
-
     return subscription;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch]);
+  }, [dispatch, navigation, auth]);
 
   return (
     <Tab.Navigator
+      initialRouteName="Feeds"
       screenOptions={({route}) => ({
         tabBarIcon: ({focused, color, size}) => {
           let iconName;
 
           switch (route.name) {
-            case 'Chat': {
-              iconName = focused ? 'message-circle' : 'message-circle';
-              // navigation.navigate(route.name);
+            case 'Feeds': {
+              iconName = focused ? 'activity' : 'activity';
               size = 26;
 
               return (
@@ -48,13 +40,42 @@ export default function Home({navigation}) {
                   size={size}
                   color={color}
                   badgeCount={1}
+                  isFeeds={true}
+                />
+              );
+            }
+
+            case 'Notifications': {
+              iconName = focused ? 'bell' : 'bell';
+              size = 26;
+
+              return (
+                <IconWithBadge
+                  name={iconName}
+                  size={size}
+                  color={color}
+                  badgeCount={1}
+                  isFeeds={true}
+                />
+              );
+            }
+            case 'Chat': {
+              iconName = focused ? 'message-circle' : 'message-circle';
+              size = 26;
+
+              return (
+                <IconWithBadge
+                  name={iconName}
+                  size={size}
+                  color={color}
+                  badgeCount={1}
+                  isFeeds={true}
                 />
               );
             }
             case 'Settings': {
               iconName = focused ? 'settings' : 'settings';
               size = 26;
-              <IconWithBadge name={iconName} size={size} color={color} />;
               return <Feather name={iconName} size={size} color={color} />;
             }
 
@@ -70,10 +91,18 @@ export default function Home({navigation}) {
         },
       })}
       tabBarOptions={{
-        activeTintColor: 'black',
+        activeTintColor: '#1e2c65',
         inactiveTintColor: 'gray',
         showLabel: false,
       }}>
+      <Tab.Screen
+        name="Feeds"
+        component={Feeds}
+        options={({route}) => ({
+          title: route.name,
+          gestureEnabled: true,
+        })}
+      />
       <Tab.Screen
         name="Chat"
         component={Chat}
@@ -91,8 +120,8 @@ export default function Home({navigation}) {
         })}
       />
       <Tab.Screen
-        name="Settings"
-        component={Settings}
+        name="Notifications"
+        component={Notifications}
         options={({route}) => ({
           title: route.name,
           gestureEnabled: true,

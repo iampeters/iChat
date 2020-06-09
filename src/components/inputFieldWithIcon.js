@@ -38,6 +38,7 @@ export default function InputFieldWithIcon({
         autoFocus={autoFocus}
         onChangeText={onChangeText}
         textContentType={textContentType}
+        // textContentType=''
         secureTextEntry={secureTextEntry}
         value={value}
         ref={ref}

@@ -25,10 +25,11 @@ import {
   setChats,
   setActiveChats,
 } from '../../../redux/Actions/chatActions';
+import {StackActions} from '@react-navigation/native';
 
 export default function ChatDetails({route, navigation}) {
   const {user} = route.params;
-
+  const auth = useSelector(state => state.auth.isAuthenticated);
   const [message, setMessage] = useState('');
   const chats = useSelector(state => state.incoming);
   const dispatch = useDispatch();
@@ -37,17 +38,30 @@ export default function ChatDetails({route, navigation}) {
     dispatch(getChats());
   }, [dispatch]);
 
+  useEffect(() => {
+    const subscription = navigation.addListener('focus', () => {
+      !auth && navigation.dispatch(StackActions.replace('Splash'));
+    });
+    return subscription;
+  }, [auth, dispatch, navigation]);
+
   const handleSubmit = () => {
     if (message.length !== 0) {
       const chat = {
         message: message,
-        timestamp: `${new Date().getMinutes()}:${new Date().getSeconds()}`,
+        timestamp: `${new Date().getHours()}:${new Date().getMinutes()}`,
         username: 'john',
         friend: user.username,
+        delivered: false,
+        read: false,
+        messageCount: 1,
       };
 
       user.message = message;
       user.timestamp = chat.timestamp;
+      user.read = chat.read;
+      user.delivered = chat.delivered;
+      user.messageCount = chat.messageCount;
 
       dispatch(setChats(chat));
       dispatch(setActiveChats(user));

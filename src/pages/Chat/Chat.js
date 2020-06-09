@@ -12,32 +12,23 @@ import {
   List,
   ListItem,
   Thumbnail,
+  View,
 } from 'native-base';
-import {useSelector, useDispatch} from 'react-redux';
-import {getActiveChats} from '../../../redux/Actions/chatActions';
-import {logout} from '../../../redux/Actions/userActions';
+import {useSelector} from 'react-redux';
+import {StackActions} from '@react-navigation/native';
+import styles from '../Chat/Chat.Styles';
 
 export default function Chat({navigation, route}) {
-  const users = useSelector(state => state.activeChats);
-  // reverse user array
-  users.reverse();
-
-  const auth = useSelector(state => state.auth);
-  const dispatch = useDispatch();
+  const chats = useSelector(state => state.activeChats);
+  chats.reverse();
+  const auth = useSelector(state => state.auth.isAuthenticated);
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {
-      if (!auth.isAuthenticated) {
-        dispatch(logout(navigation));
-        navigation.navigate('Splash');
-      } else {
-        // get active chats
-        dispatch(getActiveChats());
-      }
+    const subscription = navigation.addListener('focus', () => {
+      !auth && navigation.dispatch(StackActions.replace('Splash'));
     });
-    return unsubscribe;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, navigation]);
+    return subscription;
+  }, [auth, chats, navigation]);
 
   return (
     <Container>
@@ -58,24 +49,31 @@ export default function Chat({navigation, route}) {
       {/* Body */}
 
       <List
-        dataArray={users}
-        renderRow={user => (
+        dataArray={chats}
+        renderRow={chat => (
           <ListItem
             avatar
-            onPress={() => navigation.navigate('ChatDetails', {user})}>
+            onPress={() => navigation.navigate('ChatDetails', {chat})}>
             <Left>
               <Thumbnail source={require('../../images/photo.jpg')} />
             </Left>
             <Body>
-              <Text>{user.name}</Text>
-              <Text note>{user.message}</Text>
+              <Text>{chat.name}</Text>
+              <Text note>{chat.message}</Text>
             </Body>
             <Right>
-              <Text note>{user.timestamp}</Text>
+              <Text note>{chat.timestamp}</Text>
+              {chat.messageCount > 0 && (
+                <View styles={styles.badgeContainer}>
+                  <View style={styles.badge}>
+                    <Text style={styles.badgeText}>{chat.messageCount}</Text>
+                  </View>
+                </View>
+              )}
             </Right>
           </ListItem>
         )}
-        keyExtractor={(user, index) => index.toString()}
+        keyExtractor={(chat, index) => index.toString()}
       />
     </Container>
   );

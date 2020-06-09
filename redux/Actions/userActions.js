@@ -17,13 +17,14 @@ export const isAuthenticated = (state = {}) => {
         });
       } else {
         res.length !== 0 ? (state = res[0]) : (state = res);
-        dispatch({type: 'IS_AUTHENTICATED', payload: state});
+        dispatch({type: 'IS_AUTHENTICATED', payload: Object.assign({}, state)});
       }
     });
   };
 };
 
-export const login = (state, navigation) => {
+// authenticate new user
+export const login = state => {
   const authService = new AuthService();
 
   const api = authService.login(state);
@@ -53,6 +54,11 @@ export const login = (state, navigation) => {
                   type: 'IS_AUTHENTICATED',
                   payload: {isAuthenticated: true},
                 });
+                // set user state
+                dispatch({
+                  type: 'USER',
+                  payload: result.result,
+                });
                 // send response to login screen
                 dispatch({
                   type: 'AUTHENTICATE',
@@ -68,7 +74,7 @@ export const login = (state, navigation) => {
           // send err to login screen
           dispatch({
             type: 'AUTHENTICATE',
-            payload: res,
+            payload: Object.assign({}, res),
           });
         }
       })
@@ -82,16 +88,79 @@ export const login = (state, navigation) => {
   };
 };
 
-export const logout = navigation => {
+// register new user
+export const register = state => {
+  const authService = new AuthService();
+
+  const api = authService.register(state);
+
   return dispatch => {
-    db.remove({}, {multi: true}, (err, res) => {
+    api
+      .then(res => {
+        const result = res;
+        if (result.token) {
+          // store user and token to database
+          db.insert(
+            {
+              isAuthenticated: true,
+              user: result.result,
+              authToken: result.token,
+            },
+            (err, user) => {
+              if (err) {
+                // dispatch err
+                dispatch({
+                  type: 'IS_AUTHENTICATED',
+                  payload: {isAuthenticated: false},
+                });
+              } else {
+                // let the app know that login is successful
+                dispatch({
+                  type: 'IS_AUTHENTICATED',
+                  payload: {isAuthenticated: true},
+                });
+                // set user state
+                dispatch({
+                  type: 'USER',
+                  payload: result.result,
+                });
+                // send response to login screen
+                dispatch({
+                  type: 'USER_CREATION',
+                  payload: {
+                    successful: true,
+                    message: 'Logged in successfully.',
+                  },
+                });
+              }
+            },
+          );
+        } else {
+          // send err to login screen
+          dispatch({
+            type: 'USER_CREATION',
+            payload: Object.assign({}, res),
+          });
+        }
+      })
+      .catch(() => {
+        // send err to application
+        dispatch({
+          type: 'USER_CREATION',
+          payload: {message: 'Oops! Something went wrong', successful: false},
+        });
+      });
+  };
+};
+
+export const logout = () => {
+  return dispatch => {
+    db.remove({isAuthenticated: true}, (err, res) => {
       if (err) {
         console.log(err.response.request._response);
       } else {
         console.log('logged out');
         dispatch(isAuthenticated());
-
-        // navigation.navigate('Splash');
       }
     });
   };

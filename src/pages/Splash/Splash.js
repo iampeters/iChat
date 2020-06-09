@@ -5,29 +5,23 @@ import {Container, Button} from 'native-base';
 import {strings} from '../../utils/strings';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import FontAwesome5 from 'react-native-vector-icons/FontAwesome5';
-import {useSelector, useDispatch} from 'react-redux';
+import {useSelector} from 'react-redux';
 import {StackActions} from '@react-navigation/native';
 
 export default function Splash({navigation}) {
-  const auth = useSelector(state => state.auth);
-  const dispatch = useDispatch();
+  const auth = useSelector(state => state.auth.isAuthenticated);
 
   useEffect(() => {
-    const unsubscribe = navigation.addListener('focus', () => {});
-
-    if (auth.isAuthenticated) {
+    if (auth) {
       navigation.dispatch(StackActions.replace('Home'));
     }
-
-    return unsubscribe;
-  }, [navigation, dispatch, auth.isAuthenticated]);
+  }, [auth, navigation]);
 
   return (
     <Container>
       <View style={styles.logo}>
         <Ionicons name="ios-chatbubbles" color="#3052ae" size={150} />
         <Text style={styles.text}> {strings.appName}</Text>
-        <Text style={styles.subText}>Welcome to iChat</Text>
       </View>
       <View style={styles.buttonContent}>
         <Button

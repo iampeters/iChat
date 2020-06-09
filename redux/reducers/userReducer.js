@@ -2,23 +2,7 @@ import db from '../../db';
 
 export const userReducer = (state = {}, action) => {
   switch (action.type) {
-    case 'JOINED': {
-      return action.payload;
-    }
-
-    case 'TYPING': {
-      return action.payload;
-    }
-
-    case 'LEFT': {
-      return action.payload;
-    }
-
-    case 'ONLINE': {
-      return action.payload;
-    }
-
-    case 'OFFLINE': {
+    case 'USER': {
       return action.payload;
     }
 
@@ -47,6 +31,16 @@ export const authReducer = (state = {}, action) => {
 export const loginReducer = (state = {}, action) => {
   switch (action.type) {
     case 'AUTHENTICATE': {
+      return action.payload;
+    }
+
+    default:
+      return state;
+  }
+};
+export const registerReducer = (state = {}, action) => {
+  switch (action.type) {
+    case 'USER_CREATION': {
       return action.payload;
     }
 

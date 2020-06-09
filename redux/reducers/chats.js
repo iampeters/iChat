@@ -24,6 +24,9 @@ export const activeChats = (state = [], action) => {
     case 'GET_ACTIVE_CHATS': {
       return action.payload;
     }
+    case 'SET_ACTIVE_CHATS': {
+      return action.payload;
+    }
 
     default:
       return state;

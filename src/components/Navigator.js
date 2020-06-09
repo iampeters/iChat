@@ -7,6 +7,7 @@ import ChatDetails from '../pages/ChatDetails/ChatDetails';
 import Signin from '../pages/Signin/Signin';
 import Signup from '../pages/Signup/Signup';
 import SplashScreen from '../pages/splashScreen/SplashScreen';
+import Profile from '../pages/Profile/Profile';
 
 const Stack = createStackNavigator();
 
@@ -36,6 +37,7 @@ export default function StackNavigator() {
       <Stack.Screen name="Signin" component={Signin} />
       <Stack.Screen name="Signup" component={Signup} />
       <Stack.Screen name="ChatDetails" component={ChatDetails} />
+      <Stack.Screen name="Profile" component={Profile} />
     </Stack.Navigator>
   );
 }

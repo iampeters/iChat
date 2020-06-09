@@ -16,7 +16,10 @@ export const setChats = state => {
 
 export const getActiveChats = state => {
   return dispatch => {
-    dispatch({type: 'GET_ACTIVE_CHATS', payload: activeChats});
+    dispatch({
+      type: 'GET_ACTIVE_CHATS',
+      payload: Object.assign([], activeChats),
+    });
   };
 };
 
@@ -24,6 +27,9 @@ export const setActiveChats = state => {
   const user = activeChats.find(item => {
     if (item.username === state.username) {
       const index = activeChats.indexOf(item);
+      item.messageCount
+        ? (state.messageCount += item.messageCount)
+        : state.messageCount;
       activeChats.splice(index, 1, state);
 
       return item;
@@ -34,6 +40,9 @@ export const setActiveChats = state => {
     activeChats.push(state);
   }
   return dispatch => {
-    dispatch({type: 'SET_ACTIVE_CHATS', payload: state});
+    dispatch({
+      type: 'SET_ACTIVE_CHATS',
+      payload: Object.assign([], activeChats),
+    });
   };
 };
