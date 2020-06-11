@@ -1,6 +1,13 @@
 import db from '../../db';
 
 export const userReducer = (state = {}, action) => {
+  db.find({isAuthenticated: true}, (err, res) => {
+    if (err) {
+      console.log(err);
+    }
+    state = res;
+  });
+
   switch (action.type) {
     case 'USER': {
       return action.payload;

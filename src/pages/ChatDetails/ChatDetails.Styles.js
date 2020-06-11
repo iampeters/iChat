@@ -40,10 +40,10 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   footer: {
-    backgroundColor: 'white',
+    backgroundColor: '#fff',
   },
   footerTab: {
-    backgroundColor: 'white',
+    backgroundColor: '#fff',
     borderRadius: 100,
   },
   searchBar: {
@@ -62,8 +62,10 @@ const styles = StyleSheet.create({
     color: 'white',
   },
   chatContainer: {
-    paddingTop: 10,
+    paddingTop: 5,
     paddingBottom: 10,
+    // marginBottom: 20,
+    // backgroundColor: 'red',
   },
   rightBubble: {
     width: 'auto',

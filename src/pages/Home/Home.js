@@ -1,7 +1,6 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import Chat from '../Chat/Chat';
-import Settings from '../Settings/Settings';
 import Feather from 'react-native-vector-icons/Feather';
 import Contacts from '../Contacts/Contacts';
 import {IconWithBadge} from '../../components/Badge';
@@ -11,13 +10,33 @@ import Notifications from '../Notifications/Notifications';
 import {StackActions} from '@react-navigation/native';
 
 export default function Home({navigation}) {
-  const auth = useSelector(state => state.auth.isAuthenticated);
+  const auth = useSelector(state => state.auth);
+  const chats = useSelector(state => state.activeChats);
+  const userDetails = useSelector(state => state.user);
+  const [newChat, setNewChat] = useState(0);
   const Tab = createBottomTabNavigator();
   const dispatch = useDispatch();
 
+  /*
+   this function will get active chats
+   filter out user responses
+  */
+  const newChatCount = () => {
+    const counts = chats.filter(
+      item => item.sender !== userDetails.username && !item.read,
+    );
+    setNewChat(counts.length);
+  };
+
+  useEffect(() => {
+    newChatCount();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [chats]);
+
   useEffect(() => {
     const subscription = navigation.addListener('focus', () => {
-      !auth && navigation.dispatch(StackActions.replace('Splash'));
+      !auth.isAuthenticated &&
+        navigation.dispatch(StackActions.replace('Splash'));
     });
     return subscription;
   }, [dispatch, navigation, auth]);
@@ -55,7 +74,7 @@ export default function Home({navigation}) {
                   size={size}
                   color={color}
                   badgeCount={1}
-                  isFeeds={true}
+                  isFeeds={false}
                 />
               );
             }
@@ -68,8 +87,8 @@ export default function Home({navigation}) {
                   name={iconName}
                   size={size}
                   color={color}
-                  badgeCount={1}
-                  isFeeds={true}
+                  badgeCount={newChat}
+                  isFeeds={false}
                 />
               );
             }

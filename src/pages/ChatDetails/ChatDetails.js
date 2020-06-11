@@ -1,7 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {
   Container,
-  Text,
   Header,
   Left,
   Body,
@@ -10,7 +9,6 @@ import {
   Title,
   Button,
   List,
-  ListItem,
   Thumbnail,
   Subtitle,
   Footer,
@@ -26,17 +24,21 @@ import {
   setActiveChats,
 } from '../../../redux/Actions/chatActions';
 import {StackActions} from '@react-navigation/native';
+import LeftBubble from '../../components/Bubbles/LeftBubble';
+import RightBubble from '../../components/Bubbles/RightBubble';
 
 export default function ChatDetails({route, navigation}) {
   const {user} = route.params;
   const auth = useSelector(state => state.auth.isAuthenticated);
+  const userDetails = useSelector(state => state.user);
   const [message, setMessage] = useState('');
-  const chats = useSelector(state => state.incoming);
+  const incoming = useSelector(state => state.incoming);
+  const chats = incoming.filter(item => item.receiver === user.username);
   const dispatch = useDispatch();
 
   useEffect(() => {
     dispatch(getChats());
-  }, [dispatch]);
+  }, [dispatch, chats]);
 
   useEffect(() => {
     const subscription = navigation.addListener('focus', () => {
@@ -50,8 +52,9 @@ export default function ChatDetails({route, navigation}) {
       const chat = {
         message: message,
         timestamp: `${new Date().getHours()}:${new Date().getMinutes()}`,
-        username: 'john',
-        friend: user.username,
+        sender: userDetails.username,
+        receiver: user.username,
+        name: user.name,
         delivered: false,
         read: false,
         messageCount: 1,
@@ -62,6 +65,8 @@ export default function ChatDetails({route, navigation}) {
       user.read = chat.read;
       user.delivered = chat.delivered;
       user.messageCount = chat.messageCount;
+      user.sender = chat.sender;
+      user.receiver = chat.receiver;
 
       dispatch(setChats(chat));
       dispatch(setActiveChats(user));
@@ -104,29 +109,11 @@ export default function ChatDetails({route, navigation}) {
         style={styles.chatContainer}
         dataArray={chats}
         renderRow={chat =>
-          chat && chat.username === 'john' ? (
-            // right bubble
-            <ListItem style={styles.rightBubble}>
-              <Body>
-                <Text>{chat.message}</Text>
-              </Body>
-              <Right>
-                <Text note>{chat.timestamp}</Text>
-              </Right>
-            </ListItem>
+          chat && chat.sender === userDetails.username ? (
+            <RightBubble text={chat.message} timestamp={chat.timestamp} />
           ) : (
-            // left bubble
             chat && (
-              <ListItem style={styles.leftBubble}>
-                <Body>
-                  <Text style={styles.leftBubbleText}>{chat.message}</Text>
-                </Body>
-                <Right>
-                  <Text note style={styles.leftTimeStamp}>
-                    {chat.timestamp}
-                  </Text>
-                </Right>
-              </ListItem>
+              <LeftBubble text={chat.message} timestamp={chat.timestamp} />
             )
           )
         }
