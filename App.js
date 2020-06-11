@@ -18,7 +18,7 @@ const App = () => {
 
   useEffect(() => {
     dispatch(isAuthenticated());
-  }, [dispatch]);
+  });
 
   return (
     <NavigationContainer>

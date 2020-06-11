@@ -21,6 +21,10 @@ export default function InputFieldWithIcon({
   onIconPress,
   rightIconName,
   disabled,
+  maxLength,
+  onSubmitEditing,
+  blurOnSubmit,
+  autoCapitalize,
 }) {
   return (
     <View style={styles.inputWrapper}>
@@ -38,11 +42,14 @@ export default function InputFieldWithIcon({
         autoFocus={autoFocus}
         onChangeText={onChangeText}
         textContentType={textContentType}
-        // textContentType=''
+        maxLength={maxLength}
         secureTextEntry={secureTextEntry}
         value={value}
         ref={ref}
+        autoCapitalize={autoCapitalize}
         disabled={disabled}
+        blurOnSubmit={blurOnSubmit}
+        onSubmitEditing={onSubmitEditing}
       />
       {isPassword && (
         <Button transparent onPress={onIconPress} style={styles.inputRightIcon}>

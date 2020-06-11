@@ -17,7 +17,7 @@ export const isAuthenticated = (state = {}) => {
         });
       } else {
         res.length !== 0 ? (state = res[0]) : (state = res);
-        dispatch({type: 'IS_AUTHENTICATED', payload: Object.assign({}, state)});
+        dispatch({type: 'IS_AUTHENTICATED', payload: state});
       }
     });
   };
@@ -74,15 +74,16 @@ export const login = state => {
           // send err to login screen
           dispatch({
             type: 'AUTHENTICATE',
-            payload: Object.assign({}, res),
+            payload: res,
           });
         }
       })
       .catch(() => {
         // send err to application
+
         dispatch({
           type: 'AUTHENTICATE',
-          payload: {message: 'Oops! Something went wrong', successful: false},
+          payload: {message: 'Network request failed', successful: false},
         });
       });
   };
@@ -139,7 +140,7 @@ export const register = state => {
           // send err to login screen
           dispatch({
             type: 'USER_CREATION',
-            payload: Object.assign({}, res),
+            payload: res,
           });
         }
       })
@@ -147,7 +148,7 @@ export const register = state => {
         // send err to application
         dispatch({
           type: 'USER_CREATION',
-          payload: {message: 'Oops! Something went wrong', successful: false},
+          payload: {message: 'Network request failed', successful: false},
         });
       });
   };

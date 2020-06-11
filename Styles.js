@@ -94,6 +94,9 @@ const globalStyles = StyleSheet.create({
   leftBubbleText: {
     color: '#fff',
   },
+  primaryColor: {
+    color: '#6355a6',
+  },
 });
 
 export default globalStyles;

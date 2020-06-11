@@ -16,7 +16,7 @@ export default function Signin({navigation}) {
   const [submitted, setSubmitted] = useState(false);
   const [isPasswordValid, setPasswordValid] = useState(null);
   const [isEmailValid, setEmailValid] = useState(null);
-  const auth = useSelector(state => state.auth.isAuthenticated);
+  const auth = useSelector(state => state.auth);
   const dispatch = useDispatch();
   const loginResponse = useSelector(state => state.login);
 
@@ -29,7 +29,7 @@ export default function Signin({navigation}) {
         // display errors
         Toast.show({
           text: loginResponse.message,
-          buttonText: 'Okay',
+          buttonText: 'Dismiss',
           type: 'danger',
           position: 'bottom',
           duration: 3000,
@@ -59,10 +59,7 @@ export default function Signin({navigation}) {
   }, [dispatch, navigation, loginResponse]);
 
   useEffect(() => {
-    const subscription = navigation.addListener('focus', () => {
-      auth && navigation.dispatch(StackActions.replace('Home'));
-    });
-    return subscription;
+    auth.isAuthenticated && navigation.dispatch(StackActions.replace('Home'));
   }, [navigation, auth]);
 
   const handleSubmit = async () => {
@@ -107,6 +104,7 @@ export default function Signin({navigation}) {
   };
 
   return (
+    // eslint-disable-next-line react-native/no-inline-styles
     <Container style={{height: screenHeight, backgroundColor: '#fff'}}>
       <ScrollView>
         <View style={styles.logo}>
@@ -132,6 +130,7 @@ export default function Signin({navigation}) {
             keyboardType="email-address"
             placeholderTextColor="#1e2c65"
             textContentType="emailAddress"
+            autoCapitalize="none"
             secureTextEntry={false}
             value={email}
             valid={isEmailValid}
@@ -155,6 +154,7 @@ export default function Signin({navigation}) {
             keyboardType="default"
             placeholderTextColor="#1e2c65"
             textContentType="password"
+            autoCapitalize="none"
             secureTextEntry={hidden}
             value={password}
             valid={isPasswordValid}

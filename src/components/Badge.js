@@ -9,7 +9,7 @@ export function IconWithBadge({name, badgeCount, color, size, isFeeds}) {
       {badgeCount > 0 && (
         <View style={isFeeds ? styles.feedContent : styles.content}>
           <Text style={styles.text}>
-            {badgeCount > 10 ? '10+' : isFeeds ? '' : badgeCount}
+            {badgeCount >= 100 ? '99+' : isFeeds ? '' : badgeCount}
           </Text>
         </View>
       )}

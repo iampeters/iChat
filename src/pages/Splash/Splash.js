@@ -9,13 +9,14 @@ import {useSelector} from 'react-redux';
 import {StackActions} from '@react-navigation/native';
 
 export default function Splash({navigation}) {
-  const auth = useSelector(state => state.auth.isAuthenticated);
+  const auth = useSelector(state => state.auth);
 
   useEffect(() => {
-    if (auth) {
-      navigation.dispatch(StackActions.replace('Home'));
-    }
-  }, [auth, navigation]);
+    const subscription = navigation.addListener('focus', () => {
+      auth.isAuthenticated && navigation.dispatch(StackActions.replace('Home'));
+    });
+    return subscription;
+  }, [auth.isAuthenticated, navigation]);
 
   return (
     <Container>
@@ -28,7 +29,7 @@ export default function Splash({navigation}) {
           full
           rounded
           style={styles.button}
-          onPress={() => navigation.navigate('Signin')}>
+          onPress={() => navigation.dispatch(StackActions.replace('Signin'))}>
           <Text style={styles.buttonText}>Get Started</Text>
           <FontAwesome5
             name="arrow-right"

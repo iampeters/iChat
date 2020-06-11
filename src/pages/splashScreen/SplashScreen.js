@@ -22,7 +22,7 @@ export default function SplashScreen({navigation}) {
       }
     }, 3000);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch]);
+  }, [dispatch, navigation]);
 
   return (
     <Container>

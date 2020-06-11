@@ -18,7 +18,7 @@ import {StackActions} from '@react-navigation/native';
 
 export default function Contacts({navigation}) {
   let contacts = [
-    {name: 'Peters Chikezie', info: 'xoxo', username: 'iampeters'},
+    {name: 'Debs', info: 'xoxo', username: 'debby_rise'},
     {name: 'Oba', info: 'Hello world', username: 'oba'},
     {name: 'Sinach', info: 'Who goes there?', username: 'sinach'},
   ];

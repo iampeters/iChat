@@ -14,7 +14,7 @@ import styles from './Signup.Styles';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import InputFieldWithIcon from '../../components/inputFieldWithIcon';
 import {useDispatch, useSelector} from 'react-redux';
-import {login, register} from '../../../redux/Actions/userActions';
+import {register} from '../../../redux/Actions/userActions';
 import {StackActions} from '@react-navigation/native';
 import {ScrollView} from 'react-native-gesture-handler';
 
@@ -30,6 +30,10 @@ export default function Signup({navigation, route}) {
   const [isPasswordMatch, setPasswordMatch] = useState(null);
   const [isLastnameValid, setLastnameValid] = useState(null);
   const [isFirstnameValid, setFirstValid] = useState(null);
+  const [username, setUsername] = useState();
+  const [isUsernameValid, setUsernameValid] = useState(null);
+  const [phoneNumber, setPhoneNumber] = useState();
+  const [isPhoneNumberValid, setPhoneNumberValid] = useState(null);
   const [isEmailValid, setEmailValid] = useState(null);
 
   const auth = useSelector(state => state.auth.isAuthenticated);
@@ -43,10 +47,11 @@ export default function Signup({navigation, route}) {
         // display errors
         Toast.show({
           text: registerResponse.message,
-          buttonText: 'Okay',
+          buttonText: 'Dismiss',
           type: 'danger',
           position: 'bottom',
-          duration: 3000,
+          duration: 5000,
+          buttonStyle: '',
           onClose: () =>
             dispatch({
               type: 'AUTHENTICATE',
@@ -74,10 +79,10 @@ export default function Signup({navigation, route}) {
   }, [dispatch, navigation, registerResponse]);
 
   useEffect(() => {
-    const subscription = navigation.addListener('focus', () => {
-      auth && navigation.dispatch(StackActions.replace('Home'));
-    });
-    return subscription;
+    // const subscription = navigation.addListener('focus', () => {
+    auth && navigation.dispatch(StackActions.replace('Home'));
+    // });
+    // return subscription;
   }, [auth, navigation]);
 
   const handleSubmit = async () => {
@@ -87,6 +92,8 @@ export default function Signup({navigation, route}) {
       confirmPassword,
       firstname,
       lastname,
+      username,
+      phoneNumber,
     };
 
     setHidden(true);
@@ -128,6 +135,28 @@ export default function Signup({navigation, route}) {
     }
   };
 
+  const validateUsername = text => {
+    let reg = /^[a-zA-Z0-9_]{2,}$/;
+    if (!reg.test(text)) {
+      setUsername(text);
+      setUsernameValid(false);
+    } else {
+      setUsername(text);
+      setUsernameValid(true);
+    }
+  };
+
+  const validatePhoneNumber = text => {
+    let reg = /^[0-9]{11,11}$/;
+    if (!reg.test(text)) {
+      setPhoneNumber(text);
+      setPhoneNumberValid(false);
+    } else {
+      setPhoneNumber(text);
+      setPhoneNumberValid(true);
+    }
+  };
+
   const validatePassword = text => {
     let reg = /(?=.*\d)(?=.*[a-z]*[A-Z]).{6,}/;
     // min 6 chars
@@ -162,7 +191,7 @@ export default function Signup({navigation, route}) {
         <Left>
           <Button transparent onPress={() => navigation.goBack()}>
             <Icon name="arrow-back" style={styles.icon} />
-            <Title style={styles.title}>Signin</Title>
+            <Title style={styles.title}>{route.name}</Title>
           </Button>
         </Left>
       </Header>
@@ -173,30 +202,6 @@ export default function Signup({navigation, route}) {
         </View>
 
         <View style={styles.inputView}>
-          {/* email */}
-          <InputFieldWithIcon
-            iconName="user"
-            iconColor={
-              isEmailValid
-                ? '#00d68f'
-                : isEmailValid === null
-                ? '#1e2c65'
-                : '#ff3d71'
-            }
-            iconSize={20}
-            autoFocus={false}
-            placeholder="Email"
-            onChangeText={text => validateEmail(text)}
-            returnKeyType="next"
-            keyboardType="email-address"
-            placeholderTextColor="#1e2c65"
-            textContentType="emailAddress"
-            secureTextEntry={false}
-            value={email}
-            valid={isEmailValid}
-            disabled={submitted}
-          />
-
           {/* firstname */}
           <InputFieldWithIcon
             iconName="user"
@@ -213,6 +218,7 @@ export default function Signup({navigation, route}) {
             onChangeText={text => validateName(text, 'firstname')}
             returnKeyType="next"
             keyboardType="default"
+            maxLength={15}
             placeholderTextColor="#1e2c65"
             textContentType="name"
             secureTextEntry={false}
@@ -237,11 +243,88 @@ export default function Signup({navigation, route}) {
             onChangeText={text => validateName(text, 'lastname')}
             returnKeyType="next"
             keyboardType="default"
+            maxLength={15}
             placeholderTextColor="#1e2c65"
-            textContentType="name"
+            textContentType="familyName"
             secureTextEntry={false}
             value={lastname}
             valid={isLastnameValid}
+            disabled={submitted}
+          />
+
+          {/* username */}
+          <InputFieldWithIcon
+            iconName="user"
+            iconColor={
+              isUsernameValid
+                ? '#00d68f'
+                : isUsernameValid === null
+                ? '#1e2c65'
+                : '#ff3d71'
+            }
+            iconSize={20}
+            autoFocus={false}
+            placeholder="Username"
+            onChangeText={text => validateUsername(text)}
+            returnKeyType="next"
+            keyboardType="default"
+            placeholderTextColor="#1e2c65"
+            textContentType="username"
+            autoCapitalize="none"
+            secureTextEntry={false}
+            maxLength={15}
+            value={username}
+            valid={isUsernameValid}
+            disabled={submitted}
+          />
+
+          {/* phoneNumber */}
+          <InputFieldWithIcon
+            iconName="phone"
+            iconColor={
+              isPhoneNumberValid
+                ? '#00d68f'
+                : isPhoneNumberValid === null
+                ? '#1e2c65'
+                : '#ff3d71'
+            }
+            iconSize={20}
+            autoFocus={false}
+            placeholder="Phone number"
+            onChangeText={text => validatePhoneNumber(text)}
+            returnKeyType="next"
+            keyboardType="number-pad"
+            placeholderTextColor="#1e2c65"
+            textContentType="telephoneNumber"
+            secureTextEntry={false}
+            maxLength={11}
+            value={phoneNumber}
+            valid={isPhoneNumberValid}
+            disabled={submitted}
+          />
+
+          {/* email */}
+          <InputFieldWithIcon
+            iconName="at-sign"
+            iconColor={
+              isEmailValid
+                ? '#00d68f'
+                : isEmailValid === null
+                ? '#1e2c65'
+                : '#ff3d71'
+            }
+            iconSize={20}
+            autoFocus={false}
+            placeholder="Email"
+            onChangeText={text => validateEmail(text)}
+            returnKeyType="next"
+            keyboardType="email-address"
+            autoCapitalize="none"
+            placeholderTextColor="#1e2c65"
+            textContentType="emailAddress"
+            secureTextEntry={false}
+            value={email}
+            valid={isEmailValid}
             disabled={submitted}
           />
 
