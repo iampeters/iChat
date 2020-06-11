@@ -1,6 +1,5 @@
 export const API = {
-  development: 'https://lyrisoft.io:5000/api/users/',
-  production: 'https://lyrisoft.io:5000/api/users/',
-  // localhost: 'http://192.168.43.83:5000/api/users/',
-  localhost: 'http://192.168.8.102:5000/api/users/',
+  baseUrl: 'https://ichat-nodejs-api.herokuapp.com/api/',
+  users: 'https://ichat-nodejs-api.herokuapp.com/api/users/',
+  chats: 'https://ichat-nodejs-api.herokuapp.com/api/chats',
 };

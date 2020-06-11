@@ -131,6 +131,7 @@ export default function Signin({navigation}) {
             placeholderTextColor="#1e2c65"
             textContentType="emailAddress"
             autoCapitalize="none"
+            // blurOnSubmit={false}
             secureTextEntry={false}
             value={email}
             valid={isEmailValid}
@@ -158,6 +159,7 @@ export default function Signin({navigation}) {
             secureTextEntry={hidden}
             value={password}
             valid={isPasswordValid}
+            // blurOnSubmit={false}
             isPassword={true}
             onIconPress={handleVisibility}
             rightIconName={hidden ? 'eye-off' : 'eye'}

@@ -4,8 +4,8 @@ import {API} from '../API';
 export default class AuthService {
   constructor() {}
 
-  token = API.localhost + 'token';
-  create = API.localhost + 'add';
+  token = API.users + 'token';
+  create = API.users + 'add';
 
   async login(data) {
     try {
