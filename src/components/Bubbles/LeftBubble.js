@@ -1,15 +1,26 @@
 import React from 'react';
 import {View, StyleSheet} from 'react-native';
 import {moderateScale} from 'react-native-size-matters';
-import {Text, Image} from 'native-base';
+import {Text} from 'native-base';
 import Svg, {Path} from 'react-native-svg';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import Feather from 'react-native-vector-icons/Feather';
 
 export default function LeftBubble({text, timestamp, status}) {
   return (
     <View style={[styles.item, styles.itemIn]}>
       <View style={styles.balloon}>
         <Text style={styles.text}>{text}</Text>
-        <Text style={styles.timestamp}>{timestamp}</Text>
+
+        <View style={styles.footNote}>
+          <Text style={styles.timestamp}>{timestamp}</Text>
+          {status === 'sent' && (
+            <Feather style={styles.status} name={'check'} size={13} />
+          )}
+          {status === 'read' && (
+            <Ionicons style={styles.status} name={'ios-done-all'} size={18} />
+          )}
+        </View>
         <View style={[styles.arrowContainer, styles.arrowLeftContainer]}>
           <Svg
             style={styles.arrowLeft}
@@ -85,5 +96,16 @@ const styles = StyleSheet.create({
     color: 'lightgray',
     fontSize: 12,
     textAlign: 'left',
+  },
+  status: {
+    color: 'lightgray',
+    textAlign: 'left',
+    marginLeft: 4,
+  },
+  footNote: {
+    // flex: 1,
+    alignItems: 'flex-start',
+    flexDirection: 'row',
+    justifyContent: 'flex-start',
   },
 });

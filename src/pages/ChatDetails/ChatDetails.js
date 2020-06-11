@@ -15,7 +15,10 @@ import {
   FooterTab,
   Item,
   Input,
+  ActionSheet,
+  Toast,
 } from 'native-base';
+import {Clipboard} from 'react-native';
 import styles from './ChatDetails.Styles';
 import {useDispatch, useSelector} from 'react-redux';
 import {
@@ -26,6 +29,7 @@ import {
 import {StackActions} from '@react-navigation/native';
 import LeftBubble from '../../components/Bubbles/LeftBubble';
 import RightBubble from '../../components/Bubbles/RightBubble';
+import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
 
 export default function ChatDetails({route, navigation}) {
   const {user} = route.params;
@@ -35,10 +39,22 @@ export default function ChatDetails({route, navigation}) {
   const incoming = useSelector(state => state.incoming);
   const chats = incoming.filter(item => item.receiver === user.username);
   const dispatch = useDispatch();
+  const [highlightColor, setHighlightColor] = useState('transparent');
+  const [copiedText, setCopiedText] = useState('');
 
-  useEffect(() => {
-    dispatch(getChats());
-  }, [dispatch, chats]);
+  // buttons
+  const BUTTONS = [
+    {text: 'Forward', icon: 'ios-share-alt'},
+    {text: 'Copy text', icon: 'copy'},
+    {text: 'Delete', icon: 'trash'},
+    {text: 'Cancel', icon: 'close'},
+  ];
+  const DESTRUCTIVE_INDEX = 3;
+  const CANCEL_INDEX = 4;
+
+  // useEffect(() => {
+  //   dispatch(getChats());
+  // }, [chats, dispatch]);
 
   useEffect(() => {
     const subscription = navigation.addListener('focus', () => {
@@ -56,6 +72,7 @@ export default function ChatDetails({route, navigation}) {
         receiver: user.username,
         name: user.name,
         delivered: false,
+        status: 'sent',
         read: false,
         messageCount: 1,
       };
@@ -72,6 +89,61 @@ export default function ChatDetails({route, navigation}) {
       dispatch(setActiveChats(user));
       setMessage('');
     }
+  };
+
+  // actions
+  const copyToClipboard = text => {
+    Clipboard.setString(text);
+    fetchCopiedText();
+
+    Toast.show({
+      text: 'Copied to clipboard!',
+      buttonText: 'Dismiss',
+      type: 'success',
+      position: 'bottom',
+      duration: 1000,
+    });
+  };
+
+  const fetchCopiedText = async () => {
+    const text = await Clipboard.getString();
+    setCopiedText(text);
+  };
+
+  const handleLongPressAction = (type, chat) => {
+    if (type) {
+      switch (type.text) {
+        case 'Copy text': {
+          copyToClipboard(chat.message);
+          break;
+        }
+        case 'Forward': {
+          break;
+        }
+        case 'Delete': {
+          break;
+        }
+        case 'Cancel': {
+          break;
+        }
+        default:
+          return;
+      }
+    }
+  };
+
+  const handleLongPress = chat => {
+    setHighlightColor('');
+    ActionSheet.show(
+      {
+        options: BUTTONS,
+        cancelButtonIndex: CANCEL_INDEX,
+        destructiveButtonIndex: DESTRUCTIVE_INDEX,
+      },
+      buttonIndex => {
+        handleLongPressAction(BUTTONS[buttonIndex], chat);
+      },
+    );
   };
 
   return (
@@ -110,10 +182,22 @@ export default function ChatDetails({route, navigation}) {
         dataArray={chats}
         renderRow={chat =>
           chat && chat.sender === userDetails.username ? (
-            <RightBubble text={chat.message} timestamp={chat.timestamp} />
+            <TouchableWithoutFeedback
+              onLongPress={() => handleLongPress(chat)}
+              style={{backgroundColor: highlightColor}}>
+              <RightBubble
+                text={chat.message}
+                timestamp={chat.timestamp}
+                status={chat.status}
+              />
+            </TouchableWithoutFeedback>
           ) : (
             chat && (
-              <LeftBubble text={chat.message} timestamp={chat.timestamp} />
+              <TouchableWithoutFeedback
+                onLongPress={() => handleLongPress(chat)}
+                style={{backgroundColor: highlightColor}}>
+                <LeftBubble text={chat.message} timestamp={chat.timestamp} />
+              </TouchableWithoutFeedback>
             )
           )
         }
@@ -128,6 +212,7 @@ export default function ChatDetails({route, navigation}) {
               onChangeText={text => setMessage(text)}
               placeholder="Start typing..."
               value={message}
+              multiline
               // style={styles.searchBar}
             />
             <Icon name="attach" style={styles.attachIcon} />

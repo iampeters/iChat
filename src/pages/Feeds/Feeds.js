@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Container,
   Text,
@@ -9,10 +9,7 @@ import {
   Icon,
   Title,
   Button,
-  List,
-  ListItem,
   Thumbnail,
-  View,
   Content,
 } from 'native-base';
 import globalStyles from '../../../Styles';

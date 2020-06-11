@@ -11,6 +11,7 @@ export const setChats = state => {
   chats.push(state);
   return dispatch => {
     dispatch({type: 'SET_CHATS', payload: state});
+    dispatch({type: 'GET_CHATS', payload: chats});
   };
 };
 

@@ -18,6 +18,7 @@ export const isAuthenticated = (state = {}) => {
       } else {
         res.length !== 0 ? (state = res[0]) : (state = res);
         dispatch({type: 'IS_AUTHENTICATED', payload: state});
+        dispatch({type: 'USER', payload: state});
       }
     });
   };

@@ -8,17 +8,21 @@ import {useSelector, useDispatch} from 'react-redux';
 import Feeds from '../Feeds/Feeds';
 import Notifications from '../Notifications/Notifications';
 import {StackActions} from '@react-navigation/native';
-import {AppState} from 'react-native';
+import useAppState from 'react-native-appstate-hook';
 
 export default function Home({navigation}) {
   const auth = useSelector(state => state.auth);
   const chats = useSelector(state => state.activeChats);
   const userDetails = useSelector(state => state.user);
-  const [appState, setAppState] = useState(AppState.currentState);
   const [newChat, setNewChat] = useState(0);
   const Tab = createBottomTabNavigator();
   const dispatch = useDispatch();
-  const appStateRef = React.useRef(appState);
+  // app state
+  const {appState} = useAppState({
+    onChange: newAppState => handleAppState,
+    onForeground: () => handleAppState,
+    onBackground: () => handleAppState,
+  });
 
   /*
    this function will get active chats
@@ -46,19 +50,15 @@ export default function Home({navigation}) {
 
   // handle appState
   useEffect(() => {
-    AppState.addEventListener('change', () => handleAppState);
-    return () => {
-      AppState.removeEventListener('change', () => handleAppState);
-    };
-  }, []);
-
-  useEffect(() => {
-    console.log('App state', appStateRef.current);
+    if (appState === 'active') {
+      console.log('Online');
+    } else {
+      console.log('Away');
+    }
   }, [appState]);
 
   const handleAppState = nextAppState => {
-    appStateRef.current = nextAppState;
-    setAppState(nextAppState);
+    console.log('App state', appState);
   };
 
   return (
