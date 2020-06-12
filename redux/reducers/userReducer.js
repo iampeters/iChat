@@ -35,6 +35,7 @@ export const authReducer = (state = {}, action) => {
       return state;
   }
 };
+
 export const loginReducer = (state = {}, action) => {
   switch (action.type) {
     case 'AUTHENTICATE': {

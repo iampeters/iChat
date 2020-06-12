@@ -16,7 +16,7 @@ import {
 } from 'native-base';
 import {useSelector} from 'react-redux';
 import {StackActions} from '@react-navigation/native';
-import styles from '../Chat/Chat.Styles';
+import styles from './Chat.Styles';
 
 export default function Chat({navigation, route}) {
   const chats = useSelector(state => state.activeChats);

@@ -1,6 +1,5 @@
 import React, {useState, useEffect} from 'react';
 import {
-  Container,
   Header,
   Left,
   Body,
@@ -8,7 +7,6 @@ import {
   Icon,
   Title,
   Button,
-  List,
   Thumbnail,
   Subtitle,
   Footer,
@@ -17,8 +15,9 @@ import {
   Input,
   ActionSheet,
   Toast,
+  View,
 } from 'native-base';
-import {Clipboard} from 'react-native';
+import {Clipboard, Alert} from 'react-native';
 import styles from './ChatDetails.Styles';
 import {useDispatch, useSelector} from 'react-redux';
 import {
@@ -29,7 +28,7 @@ import {
 import {StackActions} from '@react-navigation/native';
 import LeftBubble from '../../components/Bubbles/LeftBubble';
 import RightBubble from '../../components/Bubbles/RightBubble';
-import {TouchableWithoutFeedback} from 'react-native-gesture-handler';
+import {TouchableWithoutFeedback, FlatList} from 'react-native-gesture-handler';
 
 export default function ChatDetails({route, navigation}) {
   const {user} = route.params;
@@ -38,9 +37,12 @@ export default function ChatDetails({route, navigation}) {
   const [message, setMessage] = useState('');
   const incoming = useSelector(state => state.incoming);
   const chats = incoming.filter(item => item.receiver === user.username);
+  chats.reverse();
+
   const dispatch = useDispatch();
   const [highlightColor, setHighlightColor] = useState('transparent');
   const [copiedText, setCopiedText] = useState('');
+  // let listRef = React.useRef();
 
   // buttons
   const BUTTONS = [
@@ -49,8 +51,8 @@ export default function ChatDetails({route, navigation}) {
     {text: 'Delete', icon: 'trash'},
     {text: 'Cancel', icon: 'close'},
   ];
-  const DESTRUCTIVE_INDEX = 3;
-  const CANCEL_INDEX = 4;
+  const DESTRUCTIVE_INDEX = 2;
+  const CANCEL_INDEX = 3;
 
   // useEffect(() => {
   //   dispatch(getChats());
@@ -63,6 +65,7 @@ export default function ChatDetails({route, navigation}) {
     return subscription;
   }, [auth, dispatch, navigation]);
 
+  // handle submit
   const handleSubmit = () => {
     if (message.length !== 0) {
       const chat = {
@@ -110,6 +113,28 @@ export default function ChatDetails({route, navigation}) {
     setCopiedText(text);
   };
 
+  // handle delete
+  const deleteMessage = chat => {
+    console.log('deleted', chat);
+  };
+
+  const confirmDelete = chat => {
+    Alert.alert(
+      'Delete message from ' + chat.sender,
+      '',
+      [
+        {
+          text: 'No',
+          onPress: () => console.log('Cancel Pressed'),
+          style: 'cancel',
+        },
+        {text: 'Delete for me', onPress: deleteMessage(chat)},
+      ],
+      {cancelable: true},
+    );
+    return true;
+  };
+
   const handleLongPressAction = (type, chat) => {
     if (type) {
       switch (type.text) {
@@ -121,9 +146,7 @@ export default function ChatDetails({route, navigation}) {
           break;
         }
         case 'Delete': {
-          break;
-        }
-        case 'Cancel': {
+          confirmDelete(chat);
           break;
         }
         default:
@@ -146,13 +169,37 @@ export default function ChatDetails({route, navigation}) {
     );
   };
 
+  const renderRow = item => {
+    if (item && item.sender === userDetails.username) {
+      return (
+        <TouchableWithoutFeedback
+          onLongPress={() => handleLongPress(item)}
+          style={{backgroundColor: highlightColor}}>
+          <RightBubble
+            text={item.message}
+            timestamp={item.timestamp}
+            status={item.status}
+          />
+        </TouchableWithoutFeedback>
+      );
+    } else {
+      return (
+        <TouchableWithoutFeedback
+          onLongPress={() => handleLongPress(item)}
+          style={{backgroundColor: highlightColor}}>
+          <LeftBubble text={item.message} timestamp={item.timestamp} />
+        </TouchableWithoutFeedback>
+      );
+    }
+  };
+
   return (
-    <Container>
+    <View style={styles.container}>
       {/* header */}
       <Header>
         <Left>
           <Button transparent onPress={() => navigation.goBack()}>
-            <Icon name="arrow-back" />
+            <Icon type="Ionicons" name="arrow-back" style={{marginRight: 5}} />
             <Thumbnail
               source={require('../../images/photo.jpg')}
               style={styles.thumbnail}
@@ -176,31 +223,15 @@ export default function ChatDetails({route, navigation}) {
       </Header>
 
       {/* Body */}
-
-      <List
+      <FlatList
         style={styles.chatContainer}
-        dataArray={chats}
-        renderRow={chat =>
-          chat && chat.sender === userDetails.username ? (
-            <TouchableWithoutFeedback
-              onLongPress={() => handleLongPress(chat)}
-              style={{backgroundColor: highlightColor}}>
-              <RightBubble
-                text={chat.message}
-                timestamp={chat.timestamp}
-                status={chat.status}
-              />
-            </TouchableWithoutFeedback>
-          ) : (
-            chat && (
-              <TouchableWithoutFeedback
-                onLongPress={() => handleLongPress(chat)}
-                style={{backgroundColor: highlightColor}}>
-                <LeftBubble text={chat.message} timestamp={chat.timestamp} />
-              </TouchableWithoutFeedback>
-            )
-          )
-        }
+        data={chats}
+        renderItem={({item}) => renderRow(item)}
+        // initialScrollIndex={Object(chats, chats).length}
+        scrollEnabled
+        inverted
+        snapToEnd
+        // ref={ref => (listRef = ref)}
         keyExtractor={(chat, index) => index.toString()}
       />
 
@@ -225,6 +256,6 @@ export default function ChatDetails({route, navigation}) {
           </Right>
         </FooterTab>
       </Footer>
-    </Container>
+    </View>
   );
 }

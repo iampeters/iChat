@@ -4,8 +4,6 @@ const styles = StyleSheet.create({
   container: {
     backgroundColor: '#fff',
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
   },
   text: {
     justifyContent: 'center',
@@ -41,10 +39,12 @@ const styles = StyleSheet.create({
   },
   footer: {
     backgroundColor: '#fff',
+    bottom: 0,
   },
   footerTab: {
     backgroundColor: '#fff',
     borderRadius: 100,
+    bottom: 0,
   },
   searchBar: {
     backgroundColor: 'gray',
